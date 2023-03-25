@@ -1,0 +1,80 @@
+genes;group
+lin28a;Pluripotency
+sox2;Pluripotency
+klf4;Pluripotency
+nanog;Pluripotency
+ZFP42;Pluripotency
+fbx15;Pluripotency
+POU5F1;Pluripotency
+klf3;Pluripotency
+klf5;Pluripotency
+oct;Pluripotency
+NR5A2;Pluripotency
+DANCR;Pluripotency
+EZH2;Pluripotency
+SEPHS1;Stress
+ADM;Stress
+CCNB1;Cell Cycle
+CCNB1;Differentiation
+CCND1;Cell Cycle
+RB1;Cell Cycle
+1 AMD;Cell Cycle
+ZNF326;Cell Cycle
+DNAJC2;Stress
+MCM2;Cell Cycle
+GSTO1;Stress
+SDHAF4;Stress
+BAX;Apoptosis
+CDKN1A;Apoptosis
+SESN1;Apoptosis
+BNIP3;Apoptosis
+CASP3;Apoptosis
+CASP9;Apoptosis
+SMIM14;Apoptosis
+FAS;Apoptosis
+Apaf1;Apoptosis
+FOxD3;Pluripotency
+cmyc;Pluripotency
+smad2;Pluripotency
+stat3;Pluripotency
+sox17;Differentiation
+FoxA1;Differentiation
+FoxA2;Differentiation
+Sox7;Differentiation
+SALL4;Differentiation
+MIXL1;Differentiation
+GATA4;Differentiation
+GATA6;Differentiation
+GDF1;Differentiation
+GDF3;Differentiation
+AFP;Differentiation
+INHBA;Differentiation
+INHBB;Differentiation
+BMP2;Differentiation
+BMP4;Differentiation
+BMP6;Differentiation
+FGF5;Differentiation
+INHBE;Differentiation
+Wnt3;Differentiation
+Foxc1;Differentiation
+FOXf1;Differentiation
+sox1;Differentiation
+Pax2;Differentiation
+pax6;Differentiation
+CHRD;Differentiation
+NOG;Differentiation
+NES;Differentiation
+CCNA2;Cell Cycle
+E2F1;Cell Cycle
+PCNA;Cell Cycle
+CCNE2;Cell Cycle
+CDC42;Cell Cycle
+CDC6;Cell Cycle
+DHFR;Cell Cycle
+CCNG2;Cell Cycle
+BRCA1;Cell Cycle
+CDKN13;Cell Cycle
+H2AC6;Cell Cycle
+H1-2;Cell Cycle
+H4C3;Cell Cycle
+H2AJ;Cell Cycle
