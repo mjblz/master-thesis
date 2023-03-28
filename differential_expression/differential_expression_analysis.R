@@ -13,12 +13,12 @@ library(ggplot2)
 
 ## VARIABLES
 plot_dir <- 'differential_expression/plots/'
-output_files_dir <- 'differential_expression/DE/normalized/'
+output_files_dir <- 'differential_expression/DE/original_labels/'
+#output_files_dir <- 'differential_expression/DE/additional_labels/'
 
 
 # Load table of counts (expression abundances for all experimental samples):
-#count_matrix <- read.csv("differential_expression/raw_counts.csv", row.names = 1, sep=";" )
-count_matrix <- read.csv("differential_expression/normalized_counts.csv", row.names = 1, sep=";", dec=',')
+count_matrix <- read.csv("differential_expression/raw_counts.csv", row.names = 1, sep=";" )
 
 #head(count_matrix)
 dim(count_matrix)
@@ -27,13 +27,15 @@ dim(count_matrix)
 annotations <-  read.csv("differential_expression/annot.csv", row.names = 1, sep=";")
 
 #Preprocess it
-annotations <- annotations[c("Condition","Group")]
+#annotations <- annotations[c("Condition","Group")]
+annotations <- annotations[c("Condition","Group","Batch")]
 
 # By default, R will choose a reference level for factors based on alphabetical order. 
 # Then, if you never tell the DESeq2 functions which level you want to compare against (e.g. which level represents the control group), 
 # the comparisons will be based on the alphabetical order of the levels.
 #annotations$Condition <- as.factor(annotations$Condition)
 #annotations$Group <- as.factor(annotations$Group)
+annotations$Batch <- as.factor(annotations$Batch)
 annotations$Combined <- factor(paste0(annotations$Group, "_", annotations$Condition))
 summary(annotations)
 
@@ -44,8 +46,8 @@ all(row.names(annotations) == colnames(count_matrix))
 
 # # Create DESeq2 input object (DESeqDataSet):
 dds <-  DESeqDataSetFromMatrix(countData = count_matrix,
-                                        colData = annotations,
-                                        design = ~ Combined)
+                               colData = annotations,
+                               design = ~ Batch + Combined)
 
 # # The DESeqDataSet is an R object to store the read counts and the intermediate results based on your analysis.
 # # counts() function can be used the expression levels from deseqmat object:
@@ -76,7 +78,7 @@ var_stablized <-  vst(dds)
 #Plotting
 categories <- c("Condition", "Group", "Combined")
 lapply(X = categories, FUN = function(x) {
-  DESeq2::plotPCA(var_stablized, intgroup = x) + geom_text(aes(label=name),vjust=2,size=4)
+  DESeq2::plotPCA(var_stablized, intgroup = x, ntop=10000) + geom_text(aes(label=name),vjust=2,size=4)
   ggsave(paste0(plot_dir, "PCA_", x, ".png"), scaling = 0.7)
 })
 
@@ -100,7 +102,8 @@ res_de <- DESeq(dds)
 
 
 #Recreate the DE we got from the lab
-all_labels <- get_all_labels()
+original <- TRUE
+all_labels <- get_all_labels(original)
 signif_genes_count <- data.frame(comparison = character(0), sign_count_padj_0.01 = numeric(0))
 
 for (label in all_labels) {
@@ -124,32 +127,32 @@ for (label in all_labels) {
   # # We can check this using heatmaps.
   # # First lets find the target genes by sortung the DESeq2 results matrix based on the log fold change:
   ordered_res_foldchange <-  de_comparison[order(de_comparison$log2FoldChange, decreasing = TRUE),]
-
+  
   #
   # # Then select the first 20 genes:
   top_genes_max_pos_foldchange <-  row.names(ordered_res_foldchange)[1:20]
-
+  
   top_genes_max_neg_foldchange <- rev(row.names(ordered_res_foldchange))[1:20]
   
-  #
+  
   # # Now we can plot the heatmap for the selected genes using the normalized and transformed expression levels:
-  # pheatmap(assay(var_stablized)[top_genes_max_pos_foldchange,], cluster_rows=FALSE, show_rownames=TRUE,
-  #          cluster_cols=FALSE, 
-  #          filename= paste0(plot_dir, "top20genes/Top20Genes_PositiveFC_",comp,".png"),
-  #          width=50,
-  #          height=20,
-  #          fontsize = 30
-  #          )
-  # 
-  # pheatmap(assay(var_stablized)[top_genes_max_neg_foldchange,], cluster_rows=FALSE, show_rownames=TRUE,
-  #          cluster_cols=FALSE,
-  #          filename= paste0(plot_dir, "top20genes/Top20Genes_NegativeFC_",comp,".png"),
-  #          width=50,
-  #          height=20,
-  #          fontsize=30
-  #          )
+  pheatmap(assay(var_stablized)[top_genes_max_pos_foldchange,], cluster_rows=FALSE, show_rownames=TRUE,
+           cluster_cols=FALSE,
+           filename= paste0(plot_dir, "top20genes/Top20Genes_PositiveFC_",comp,".png"),
+           width=50,
+           height=20,
+           fontsize = 30
+  )
+  # #
+  pheatmap(assay(var_stablized)[top_genes_max_neg_foldchange,], cluster_rows=FALSE, show_rownames=TRUE,
+           cluster_cols=FALSE,
+           filename= paste0(plot_dir, "top20genes/Top20Genes_NegativeFC_",comp,".png"),
+           width=50,
+           height=20,
+           fontsize=30
+  )
   
 }
 
-write.csv(signif_genes_count, file = paste0(output_files_dir, 'significant_genes_count_padj0.01.csv'))
+write.csv(signif_genes_count, file = paste0(plot_dir, 'significant_genes_count_padj0.01.csv'))
 ###########################################################
